@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="WpfWizardDemo.MyWizard.Views.WizardTwo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:prism="http://prismlibrary.com/"
+            xmlns:regions="clr-namespace:WpfWizardDemo.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock FontSize="44" Text="{Binding Header}"/>
+
+        <ContentControl Grid.Row="0" Grid.Column="0" prism:RegionManager.RegionName="{x:Static regions:Regions.MyWizardTwoChildOne}"/>
+        <ContentControl Grid.Row="0" Grid.Column="1" prism:RegionManager.RegionName="{x:Static regions:Regions.MyWizardTwoChildTwo}"/>
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Button HorizontalAlignment="Left" Content="Previous" Command="{Binding PrevCommand}"/>
+            <Button HorizontalAlignment="Right" Content="Next" Command="{Binding NextCommand}"/>
+        </Grid>
+    </Grid>
+</UserControl>
