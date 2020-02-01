@@ -4,7 +4,7 @@ namespace WpfWizardDemo.MyWizard.Events
 {
     public interface IMyWizardNavManager
     {
-        void Back();
+        void Back(MyWizardNavEventArgs args);
         void Next(MyWizardNavEventArgs args);
         void Start(string regionName);
     }

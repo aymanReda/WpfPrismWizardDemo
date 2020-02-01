@@ -12,6 +12,6 @@
         </Grid.RowDefinitions>
         <TextBlock FontSize="44" Text="{Binding HelloText}"/>
         <Button HorizontalAlignment="Left" Grid.Row="1" Content="Previous" Command="{Binding PrevCommand}"/>
-        <Button HorizontalAlignment="Right" Grid.Row="1" Content="Back" Command="{Binding DoneCommand}"/>
+        <Button HorizontalAlignment="Right" Grid.Row="1" Content="Close" Command="{Binding DoneCommand}"/>
     </Grid>
 </UserControl>

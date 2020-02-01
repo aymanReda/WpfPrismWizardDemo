@@ -18,8 +18,6 @@ namespace WpfWizardDemo
     /// </summary>
     public partial class App : PrismApplication
     {
-        private IUnityContainer _container;
-
         protected override Window CreateShell()
         {
             return new MainWindow();
@@ -27,10 +25,7 @@ namespace WpfWizardDemo
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            _container = containerRegistry.GetContainer();
-
             containerRegistry.Register<MainWindowViewModel>();
-
             containerRegistry.Register<WizardOneViewModel>();
             containerRegistry.Register<WizardTwoViewModel>();
             containerRegistry.Register<WizardThreeViewModel>();
@@ -38,11 +33,11 @@ namespace WpfWizardDemo
             containerRegistry.Register<WizardTwoChildTwoViewModel>();
             containerRegistry.Register<IMyWizardNavManager, MyWizardNavManager>();
 
-            containerRegistry.RegisterForNavigation<WizardOne>(nameof(WizardOne));
-            containerRegistry.RegisterForNavigation<WizardTwo>(nameof(WizardTwo));
-            containerRegistry.RegisterForNavigation<WizardThree>(nameof(WizardThree));
-            containerRegistry.RegisterForNavigation<WizardTwoChildOne>(nameof(WizardTwoChildOne));
-            containerRegistry.RegisterForNavigation<WizardTwoChildTwo>(nameof(WizardTwoChildTwo));
+            containerRegistry.RegisterForNavigation<WizardOne>(ViewsDefinitions.WizardOne);
+            containerRegistry.RegisterForNavigation<WizardTwo>(ViewsDefinitions.WizardTwo);
+            containerRegistry.RegisterForNavigation<WizardThree>(ViewsDefinitions.WizardThree);
+            containerRegistry.RegisterForNavigation<WizardTwoChildOne>(ViewsDefinitions.WizardTwoChildOne);
+            containerRegistry.RegisterForNavigation<WizardTwoChildTwo>(ViewsDefinitions.WizardTwoChildTwo);
         }
 
         protected override IModuleCatalog CreateModuleCatalog()

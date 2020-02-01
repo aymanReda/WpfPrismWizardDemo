@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using WpfWizardDemo.MyWizard.Events;
 using WpfWizardDemo.MyWizard.EventsArgs;
+using WpfWizardDemo.MyWizard.Models;
 using WpfWizardDemo.Utilities;
 
 namespace WpfWizardDemo.MyWizard.ViewModels
@@ -46,14 +47,29 @@ namespace WpfWizardDemo.MyWizard.ViewModels
             }
         }
 
+        private Person _person;
+        public Person Person
+        {
+            get
+            {
+                return _person;
+            }
+            set
+            {
+                _person = value;
+                OnPropertyChanged(nameof(Person));
+            }
+        }
+
         public void Prev()
         {
-            _eventAggregator.GetEvent<MyWizardNavPrevEvent>().Publish();
+            _eventAggregator.GetEvent<MyWizardNavPrevEvent>().Publish(new MyWizardNavEventArgs { Person = Person });
         }
 
         public void Completed(MyWizardNavEventArgs args)
         {
-            HelloText = $"Hello {args.Person.Name}, Working in {args.Person.Company} as {args.Person.Position}"; 
+            Person = args?.Person;
+            HelloText = $"Hello {args?.Person?.Name}, Working in {args?.Person?.Company} as {args?.Person?.Position}"; 
             _eventAggregator.GetEvent<MyWizardNavNextCompletedEvent>().Unsubscribe(_completedToken);
         }
 

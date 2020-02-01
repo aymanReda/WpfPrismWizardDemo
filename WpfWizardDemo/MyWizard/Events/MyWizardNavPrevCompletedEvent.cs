@@ -3,7 +3,7 @@ using WpfWizardDemo.MyWizard.EventsArgs;
 
 namespace WpfWizardDemo.MyWizard.Events
 {
-    public class MyWizardNavPrevEvent : PubSubEvent<MyWizardNavEventArgs>
+    public class MyWizardNavPrevCompletedEvent : PubSubEvent<MyWizardNavEventArgs>
     {
     }
 }

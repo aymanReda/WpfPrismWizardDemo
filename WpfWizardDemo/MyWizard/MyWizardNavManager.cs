@@ -3,9 +3,9 @@ using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using WpfWizardDemo.MyWizard.Events;
 using WpfWizardDemo.MyWizard.EventsArgs;
-using WpfWizardDemo.MyWizard.Views;
 using WpfWizardDemo.Utilities;
 
 namespace WpfWizardDemo.MyWizard
@@ -22,9 +22,9 @@ namespace WpfWizardDemo.MyWizard
 
         private readonly Dictionary<int, string> _sequence = new Dictionary<int, string>
         {
-            { 1, nameof(WizardOne) },
-            { 2, nameof(WizardTwo) },
-            { 3, nameof(WizardThree) }
+            { 1, ViewsDefinitions.WizardOne },
+            { 2, ViewsDefinitions.WizardTwo },
+            { 3, ViewsDefinitions.WizardThree }
         };
 
         private readonly Dictionary<int, Tuple<string, string>[]> _subSequences = new Dictionary<int, Tuple<string, string>[]>
@@ -33,8 +33,8 @@ namespace WpfWizardDemo.MyWizard
                 2, 
                 new [] 
                 {
-                    new Tuple<string, string>(Regions.MyWizardTwoChildOne, nameof(WizardTwoChildOne)),
-                    new Tuple<string, string>(Regions.MyWizardTwoChildTwo, nameof(WizardTwoChildTwo))
+                    new Tuple<string, string>(Regions.MyWizardTwoChildOne, ViewsDefinitions.WizardTwoChildOne),
+                    new Tuple<string, string>(Regions.MyWizardTwoChildTwo, ViewsDefinitions.WizardTwoChildTwo)
                 }
             }
         };
@@ -47,6 +47,8 @@ namespace WpfWizardDemo.MyWizard
 
         public void Start(string regionName)
         {
+            ResetWizard();
+
             _regionName = regionName;
 
             _currentPage = 1;
@@ -61,13 +63,40 @@ namespace WpfWizardDemo.MyWizard
         {
             if (_currentPage == _sequence.Max(s => s.Key))
             {
-                CloseWizard();
+                ResetWizard();
                 return;
             }
 
             _currentPage++;
 
-            _regionManager.RequestNavigate(_regionName, _sequence[_currentPage], n => {
+            Navigate(args, () => _eventAggregator.GetEvent<MyWizardNavNextCompletedEvent>().Publish(args));
+        }
+
+        public void Back(MyWizardNavEventArgs args)
+        {
+            if (_currentPage == _sequence.Min(s => s.Key))
+            {
+                ResetWizard();
+                return;
+            }
+
+            _currentPage--;
+
+            Navigate(args, () => _eventAggregator.GetEvent<MyWizardNavPrevCompletedEvent>().Publish(args));
+        }
+
+        public void ResetWizard()
+        {
+            this.Dispose();
+        }
+
+        private void Navigate(MyWizardNavEventArgs args, Action callback)
+        {
+            var region = _regionManager.Regions[_regionName];
+
+            _regionManager.Regions[_regionName].RemoveAll();
+
+            _regionManager.RequestNavigate(_regionName, _sequence[_currentPage], _ => {
 
                 if (_subSequences.ContainsKey(_currentPage))
                 {
@@ -77,26 +106,8 @@ namespace WpfWizardDemo.MyWizard
                     }
                 }
 
-                _eventAggregator.GetEvent<MyWizardNavNextCompletedEvent>().Publish(args);
+                callback();
             });
-        }
-
-        public void Back()
-        {
-            if (_currentPage == _sequence.Min(s => s.Key))
-            {
-                CloseWizard();
-                return;
-            }
-
-            _currentPage--;
-
-            _regionManager.RequestNavigate(_regionName, _sequence[_currentPage]);
-        }
-
-        public void CloseWizard()
-        {
-            this.Dispose();
         }
 
         public void Dispose()
@@ -104,7 +115,10 @@ namespace WpfWizardDemo.MyWizard
             _eventAggregator.GetEvent<MyWizardNavNextEvent>().Unsubscribe(_nextToken);
             _eventAggregator.GetEvent<MyWizardNavPrevEvent>().Unsubscribe(_prevToken);
 
-            _regionManager.Regions[_regionName].RemoveAll();
+            if (_regionManager.Regions.Any(r => r.Name == _regionName))
+            {
+                _regionManager.Regions[_regionName].RemoveAll();
+            }
         }
     }
 }

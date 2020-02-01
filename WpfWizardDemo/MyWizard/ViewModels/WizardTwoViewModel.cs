@@ -11,11 +11,13 @@ namespace WpfWizardDemo.MyWizard.ViewModels
     {
         private readonly IEventAggregator _eventAggregator;
         private SubscriptionToken _nextCompletedEventToken;
+        private SubscriptionToken _prevCompletedEventToken;
 
         public WizardTwoViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            _nextCompletedEventToken = _eventAggregator.GetEvent<MyWizardNavNextCompletedEvent>().Subscribe(NextCompleted);
+            _nextCompletedEventToken = _eventAggregator.GetEvent<MyWizardNavNextCompletedEvent>().Subscribe(NavCompleted);
+            _prevCompletedEventToken = _eventAggregator.GetEvent<MyWizardNavPrevCompletedEvent>().Subscribe(NavCompleted);
         }
 
         private Person _person;
@@ -57,14 +59,14 @@ namespace WpfWizardDemo.MyWizard.ViewModels
 
         public void Prev()
         {
-            _eventAggregator.GetEvent<MyWizardNavPrevEvent>().Publish();
+            _eventAggregator.GetEvent<MyWizardNavPrevEvent>().Publish(new MyWizardNavEventArgs { Person = Person });
         }
 
-        private void NextCompleted(MyWizardNavEventArgs args)
+        private void NavCompleted(MyWizardNavEventArgs args)
         {
             Person = args.Person;
-            var completedEvent = _eventAggregator.GetEvent<MyWizardNavNextCompletedEvent>();
-            completedEvent.Unsubscribe(_nextCompletedEventToken);
+            _eventAggregator.GetEvent<MyWizardNavPrevCompletedEvent>().Unsubscribe(_prevCompletedEventToken);
+            _eventAggregator.GetEvent<MyWizardNavNextCompletedEvent>().Unsubscribe(_nextCompletedEventToken);
 
         }
     }
